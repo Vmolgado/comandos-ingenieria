@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTC COMANDOS</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 0;
+            background-color: #f4f4f4;
+            margin: 0;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            width: 100%;
+            height: 60px;
+            background-color: #28571f; /* Rojo oscuro */
+            color: #fff;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            left: 20px;
+            height: 50px;
+            width: auto;
+        }
+
+        .header-title {
+            text-align: center;
+            flex-grow: 1;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 2px 2px 3px #000;
+            background: linear-gradient(45deg, #FFFFFF, #D3D3D3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .date {
+            position: absolute;
+            right: 20px;
+            bottom: 10px;
+        }
+
+        .search-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .search-box {
+            width: 50%;
+            padding: 10px;
+            font-size: 1.2em;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .device-box {
+            width: calc(16% - 30px);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .device-box:hover {
+            transform: scale(1.05);
+        }
+
+        img {
+            width: 25%;
+            height: auto;
+        }
+
+        .footer {
+            font-size: 0.8em;
+            color: #000;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        #formulario-comandos {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80%;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            overflow-y: auto; /* Para permitir el desplazamiento */
+        }
+
+        #formulario-comandos.show {
+            display: block;
+            opacity: 1;
+        }
+
+        #formulario-comandos .comando {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            cursor: pointer; /* Cambia el cursor para indicar que es clicable */
+        }
+
+        #formulario-comandos .close-btn {
+    position: absolute;
+    top: 0.1px; /* Mueve la "X" más cerca de la parte superior */
+    right: 10px; /* Alinea la "X" a la derecha */
+    cursor: pointer;
+    font-size: 2.0em;
+    color: #f00; /* Cambia el color a rojo */
+    transition: color 0.3s ease-in-out;
+        }
+
+        #formulario-comandos .close-btn:hover {
+            color: #f00;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 500;
+            display: none;
+        }
+
+        #imei-input-container {
+            display: none;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #imei-input {
+            width: calc(80% - 20px);
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        #apply-imei-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #apply-imei-btn:hover {
+            background-color: #45a049;
+        }
+
+        footer {
+            width: 100%;
+            background-color: #D3D3D3; /* Gris claro */
+            color: #000;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: center;
+            font-style: italic;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="logo.png" alt="Logo" class="logo">
+        <div class="header-title">PORTAL COMANDOS INGENIERIA</div>
+        <div class="date">
+            <span id="fecha"></span>
+        </div>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="search-box" class="search-box" placeholder="Buscar dispositivo...">
+    </div>
+
+    <!-- Dispositivos -->
+    <div class="device-box" data-device-id="GV300W">
+        <img src="gv300w.png" alt="GV300W">
+        <div class="footer">GV300W</div>
+    </div>
+    <div class="device-box" data-device-id="GV310LAU">
+        <img src="gv300w.png" alt="GV310LAU">
+        <div class="footer">GV310LAU</div>
+    </div>
+    <div class="device-box" data-device-id="GV300">
+        <img src="gv300w.png" alt="GV300">
+        <div class="footer">GV300</div>
+    </div>
+    <div class="device-box" data-device-id="GV75W">
+        <img src="gv75w.png" alt="GV75W">
+        <div class="footer">GV75W</div>
+    </div>
+    <div class="device-box" data-device-id="GV600MG">
+        <img src="GV600MG.png" alt="GV600MG">
+        <div class="footer">GV600MG</div>
+    </div>
+    <div class="device-box" data-device-id="GV628W-GV648W">
+        <img src="GV600MG.png" alt="GV628W / GV648W">
+        <div class="footer">GV628W/GV648W</div>
+    </div>
+    <div class="device-box" data-device-id="GL300W">
+        <img src="gl300w.jpg" alt="GL300W">
+        <div class="footer">GL300W</div>
+    </div>
+    <div class="device-box" data-device-id="GL300">
+        <img src="GL300.png" alt="GL300">
+        <div class="footer">GL300</div>
+    </div>
+    <div class="device-box" data-device-id="CV100LG-DASHCAM">
+        <img src="CV100LG.png" alt="CV100LG DASHCAM">
+        <div class="footer">CV100LG DASHCAM</div>
+    </div>
+    <div class="device-box" data-device-id="GV55W">
+        <img src="GV55W.png" alt="GV55W">
+        <div class="footer">GV55W</div>
+    </div>
+    <div class="device-box" data-device-id="GV57MG">
+        <img src="GV57MG.png" alt="GV57MG">
+        <div class="footer">GV57MG</div>
+    </div>
+    <div class="device-box" data-device-id="GV75MG">
+        <img src="GV75MG.png" alt="GV75MG">
+        <div class="footer">GV75MG</div>
+    </div>
+    <div class="device-box" data-device-id="GMT100">
+        <img src="GMT100.png" alt="GMT100">
+        <div class="footer">GMT100</div>
+    </div>
+    <div class="device-box" data-device-id="GT301">
+        <img src="GT301.png" alt="GT301">
+        <div class="footer">GT301</div>
+    </div>
+    <div class="device-box" data-device-id="GL500">
+        <img src="GL500.png" alt="GL500">
+        <div class="footer">GL500</div>
+    </div>
+    <div class="device-box" data-device-id="TLW2-12BL">
+        <img src="TLW2-12BL.png" alt="TLW2-12BL">
+        <div class="footer">TLW2-12BL</div>
+    </div>
+    <div class="device-box" data-device-id="TLW2-12B">
+        <img src="TLW2-12B.png" alt="TLW2-12B">
+        <div class="footer">TLW2-12B</div>
+    </div>
+    <div class="device-box" data-device-id="TLW1-10A">
+        <img src="TLW1-10A.png" alt="TLW1-10A">
+        <div class="footer">TLW1-10A</div>
+    </div>
+    <div class="device-box" data-device-id="TLW1-8A">
+        <img src="TLW1-8A.png" alt="TLW1-8A">
+        <div class="footer">TLW1-8A</div>
+    </div>
+    <div class="device-box" data-device-id="PIONNERX">
+        <img src="PIONNERX.png" alt="PIONNERX">
+        <div class="footer">PIONNERX</div>
+    </div>
+    <div class="device-box" data-device-id="KNIGHTX-100">
+        <img src="KnightX 100.png" alt="KnightX 100">
+        <div class="footer">KnightX 100</div>
+    </div>
+    <div class="device-box" data-device-id="TLP1-P">
+        <img src="TLP1-P.jpg" alt="TLP1-P">
+        <div class="footer">TLP1-P</div>
+    </div>
+    <div class="device-box" data-device-id="SOLARGUARDX-100">
+        <img src="SolarGuardX 100.png" alt="SolarGuardX 100">
+        <div class="footer">SolarGuardX 100</div>
+    </div>
+    <div class="device-box" data-device-id="TLP2-SFB">
+        <img src="TLP2-SFB.png" alt="TLP2-SFB">
+        <div class="footer">TLP2-SFB</div>
+    </div>
+    <div class="device-box" data-device-id="TLP1-SF">
+        <img src="TLP1-SF.jpg" alt="TLP1-SF">
+        <div class="footer">TLP1-SF</div>
+    </div>
+    <div class="device-box" data-device-id="TLD2-D">
+        <img src="TLD2-D.png" alt="TLD2-D">
+        <div class="footer">TLD2-D</div>
+    </div>
+    <div class="device-box" data-device-id="TLP1-LF">
+        <img src="TLP1-SF.jpg" alt="TLP1-LF">
+        <div class="footer">TLP1-LF</div>
+    </div>
+    <div class="device-box" data-device-id="WARRIORX-100">
+        <img src="WarriorX 100.png" alt="WarriorX 100">
+        <div class="footer">WarriorX 100</div>
+    </div>
+    <div class="device-box" data-device-id="ST310U">
+        <img src="ST310U.png" alt="ST310U">
+        <div class="footer">ST310U</div>
+    </div>
+    <div class="device-box" data-device-id="ST4910">
+        <img src="ST4910.png" alt="ST4910">
+        <div class="footer">ST4910</div>
+    </div>
+    <div class="device-box" data-device-id="ST640LC">
+        <img src="ST640LC.png" alt="ST640LC">
+        <div class="footer">ST640LC</div>
+    </div>
+    <div class="device-box" data-device-id="ST600R">
+        <img src="ST600R.png" alt="ST600R">
+        <div class="footer">ST600R</div>
+    </div>
+    <div class="device-box" data-device-id="ST940">
+        <img src="ST940.png" alt="ST940">
+        <div class="footer">ST940</div>
+    </div>
+    <div class="device-box" data-device-id="ST3940">
+        <img src="ST3940.png" alt="ST3940">
+        <div class="footer">ST3940</div>
+    </div>
+    <div class="device-box" data-device-id="ST4940">
+        <img src="ST4940.png" alt="ST4940">
+        <div class="footer">ST4940</div>
+    </div>
+    <div class="device-box" data-device-id="TRACE5">
+        <img src="Trace5.png" alt="Trace5">
+        <div class="footer">Trace5</div>
+    </div>
+    <div class="device-box" data-device-id="OB22">
+        <img src="OB22.png" alt="OB22">
+        <div class="footer">OB22</div>
+    </div>
+    <div class="device-box" data-device-id="AT1">
+        <img src="AT1.png" alt="AT1">
+        <div class="footer">AT1</div>
+    </div>
+    <div class="device-box" data-device-id="ATA5">
+        <img src="ATA5.png" alt="ATA5">
+        <div class="footer">ATA5</div>
+    </div>
+    <div class="device-box" data-device-id="JT701">
+        <img src="JT701.png" alt="JT701">
+        <div class="footer">JT701</div>
+    </div>
+    <!-- Otros device-boxes -->
+    <!-- Formulario para mostrar comandos -->
+    <div id="overlay"></div>
+    <div id="formulario-comandos">
+        <span class="close-btn">&times;</span>
+        <div id="imei-input-container">
+            <input type="text" id="imei-input" placeholder="Ingrese el IMEI del dispositivo">
+            <button id="apply-imei-btn">CONSTRUIR COMANDO</button>
+        </div>
+        <!-- Los comandos se llenarán aquí -->
+    </div>
+
+    <script src="comandos.js"></script> <!-- Incluir el archivo comandos.js -->
+    <script>
+        const dispositivosConImei = ['ST640LC', 'ST600R', 'ST940', 'ST3940', 'ST4940', 'ST310U', 'ST4910'];
+        let selectedDeviceId = '';
+        const imeiInputContainer = document.getElementById('imei-input-container');
+        const imeiInput = document.getElementById('imei-input');
+        const applyImeiButton = document.getElementById('apply-imei-btn');
+
+        const searchBox = document.getElementById('search-box');
+        searchBox.addEventListener('input', function () {
+            const filter = searchBox.value.toLowerCase();
+            const deviceBoxes = document.getElementsByClassName('device-box');
+
+            for (let i = 0; i < deviceBoxes.length; i++) {
+                const footer = deviceBoxes[i].getElementsByClassName('footer')[0];
+                const txtValue = footer.textContent || footer.innerText;
+                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                    deviceBoxes[i].style.display = "";
+                } else {
+                    deviceBoxes[i].style.display = "none";
+                }
+            }
+        });
+
+        const deviceBoxes = document.querySelectorAll('.device-box');
+        const formularioComandos = document.getElementById('formulario-comandos');
+        const overlay = document.getElementById('overlay');
+
+        deviceBoxes.forEach(box => {
+            box.addEventListener('click', function() {
+                selectedDeviceId = this.dataset.deviceId;
+                console.log('Dispositivo clicado:', selectedDeviceId);
+                if (dispositivosConImei.includes(selectedDeviceId)) {
+                    imeiInputContainer.style.display = 'block';
+                } else {
+                    imeiInputContainer.style.display = 'none';
+                }
+                mostrarComandos(selectedDeviceId);
+            });
+        });
+
+        applyImeiButton.addEventListener('click', function() {
+            const imei = imeiInput.value;
+            console.log('IMEI aplicado:', imei);
+            if (imei && selectedDeviceId) {
+                mostrarComandos(selectedDeviceId, imei);
+            }
+        });
+
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            formularioComandos.classList.remove('show');
+            overlay.style.display = 'none';
+        });
+
+        overlay.addEventListener('click', function() {
+            formularioComandos.classList.remove('show');
+            overlay.style.display = 'none';
+        });
+
+        function mostrarComandos(deviceId, imei = '') {
+            const comandosFiltrados = comandos.filter(d => d.idDispositivo === deviceId);
+            console.log('Mostrando comandos para el dispositivo:', deviceId);
+            console.log('Comandos encontrados:', comandosFiltrados.length);
+
+            const formulario = document.getElementById('formulario-comandos');
+            formulario.innerHTML = ''; // Limpia cualquier contenido anterior
+
+            // Re-agregar el campo IMEI si es necesario
+            formulario.appendChild(imeiInputContainer);
+
+            if (comandosFiltrados.length === 0) {
+                formulario.innerHTML += '<p>No se encontraron comandos para este dispositivo.</p>';
+            } else {
+                comandosFiltrados.forEach(comando => {
+                    const div = document.createElement('div');
+                    div.className = 'comando';
+
+                    const dispositivoElemento = document.createElement('p');
+                    dispositivoElemento.textContent = `Dispositivo: ${comando.dispositivo}`;
+                    div.appendChild(dispositivoElemento);
+
+                    const descripcion = document.createElement('p');
+                    descripcion.textContent = `Descripción: ${comando.descripcion}`;
+                    div.appendChild(descripcion);
+
+                    let comandoTexto = comando.comando;
+                    if (imei && comandoTexto.includes('IMEI')) {
+                        comandoTexto = comandoTexto.replace('IMEI', imei);
+                    }
+
+                    const comandoElemento = document.createElement('p');
+                    comandoElemento.textContent = `Comando: ${comandoTexto}`;
+                    div.appendChild(comandoElemento);
+
+                    const notas = document.createElement('p');
+                    notas.textContent = `Notas: ${comando.notas}`;
+                    div.appendChild(notas);
+
+                    div.addEventListener('click', function () {
+                        navigator.clipboard.writeText(comandoTexto).then(() => {
+                            alert('Comando copiado al portapapeles');
+                        });
+                    });
+
+                    formulario.appendChild(div);
+                });
+            }
+
+            const closeButton = document.createElement('span');
+            closeButton.className = 'close-btn';
+            closeButton.innerHTML = '&times;';
+            formulario.appendChild(closeButton);
+
+            closeButton.addEventListener('click', function() {
+                formulario.classList.remove('show');
+                overlay.style.display = 'none';
+            });
+
+            console.log('HTML generado:', formulario.innerHTML);
+
+            formulario.classList.add('show');
+            overlay.style.display = 'block';
+        }
+
+        // Formatear la fecha y mostrarla en el header
+        function formatDate(date) {
+            const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const dayName = days[date.getDay()];
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${dayName}, ${day}/${month}/${year}`;
+        }
+
+        document.getElementById('fecha').textContent = formatDate(new Date());
+    </script>
+<footer>
+    <img src="logo_footer.png" alt="Logo" style="height: 35px; width: auto; vertical-align: middle; margin-right: 8px;">
+    <strong>&copy; AVL MOLGADO 2024</strong>
+</footer>
+
+</body>
+</html>
